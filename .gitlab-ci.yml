@@ -1,0 +1,25 @@
+stages:
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+
+deploy:
+  stage: deploy
+  environment: production
+  script:
+    - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    - ". ~/.nvm/nvm.sh"
+    - nvm use 16.14.2
+    - echo "Running npm install"
+    - npm install
+    - echo "Running npm run build"
+    - npm run build
+    - sudo rm -r /var/www/html/ 2> /dev/null
+    - sudo cp -r ./build/. /var/www/html
+  artifacts:
+    paths:
+      - node_modules/
+  only:
+    - develop
